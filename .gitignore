@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.ipynb_checkpoints
+*.pkl
+*.pth
+
+# Environment
+env/
+venv/
+.venv/
+ENV/
+*.env
+
+# VSCode
+.vscode/
+
+# PyTorch / Torch
+*.pt
+*.pth
+
+# Jupyter Notebook metadata
+.ipynb_checkpoints/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Streamlit cache
+.streamlit/
+
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+
+# Models (optional: keep if needed)
+# forest_fire_detector.pth
+
+# Zip archives (if using downloaded datasets)
+*.zip
+
+# Uploaded/test images
+uploads/
+temp/
