@@ -1,42 +1,47 @@
 pipeline {
     agent any
+
     environment {
-        DOCKER_IMAGE = "sujalgp/forest-fire-app"
-        DOCKER_CREDENTIALS_ID = 'dockerhub-creds'
+        DOCKER_HUB_CREDENTIALS = credentials('dockerhub-creds')
+        IMAGE_NAME = 'sujalgp/forest-fire-detection'
     }
+
     stages {
-        stage('Clone') {
+        stage('Clone Repository') {
             steps {
-                git 'https://github.com/Sujal2806/Forest-Fire-Detection.git'
+                git credentialsId: 'github-creds', url: 'https://github.com/Sujal2806/Forest-Fire-Detection.git'
             }
         }
-        stage('Build') {
+
+        stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build(DOCKER_IMAGE)
+                    sh 'docker build -t $IMAGE_NAME .'
                 }
             }
         }
-        stage('Test') {
-            steps {
-                echo '✅ Skipping unit tests (can add test_model.py later)'
-            }
-        }
-        stage('Push') {
+
+        stage('Push to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
-                        docker.image(DOCKER_IMAGE).push('latest')
-                    }
+                    sh "echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKER_HUB_CREDENTIALS_USR --password-stdin"
+                    sh "docker push $IMAGE_NAME"
                 }
             }
         }
-        stage('Deploy') {
+
+        stage('Clean Up') {
             steps {
-                sh 'docker stop forest-app || true'
-                sh 'docker rm forest-app || true'
-                sh "docker run -d -p 8501:8501 --name forest-app ${DOCKER_IMAGE}:latest"
+                script {
+                    sh "docker rmi $IMAGE_NAME"
+                }
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline execution complete.'
         }
     }
 }
