@@ -1,2 +1,4 @@
-pillow
 streamlit
+torch
+torchvision
+Pillow
