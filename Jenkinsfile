@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/Sujal2806/Forest-Fire-Detection.git'
+                git branch: 'main', url: 'https://github.com/Sujal2806/Forest-Fire-Detection.git'
             }
         }
 
@@ -29,6 +29,15 @@ pipeline {
                     '''
                 }
             }
+        }
+    }
+
+    post {
+        failure {
+            echo '🚨 Build failed!'
+        }
+        success {
+            echo '✅ Docker image built and pushed successfully!'
         }
     }
 }
