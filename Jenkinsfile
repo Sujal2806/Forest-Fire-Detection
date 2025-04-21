@@ -2,14 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('dockerhub-creds')
-        IMAGE_NAME = 'sujalgp/forest-fire-detection'
+        IMAGE_NAME = 'sujalgp/forest-fire-app'
     }
 
     stages {
-        stage('Clone Repository') {
+        stage('Clone Repo') {
             steps {
-                git credentialsId: 'github-creds', url: 'https://github.com/Sujal2806/Forest-Fire-Detection.git'
+                git 'https://github.com/sujalgp/forest-fire-app.git'
             }
         }
 
@@ -23,25 +22,13 @@ pipeline {
 
         stage('Push to Docker Hub') {
             steps {
-                script {
-                    sh "echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKER_HUB_CREDENTIALS_USR --password-stdin"
-                    sh "docker push $IMAGE_NAME"
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push $IMAGE_NAME
+                    '''
                 }
             }
-        }
-
-        stage('Clean Up') {
-            steps {
-                script {
-                    sh "docker rmi $IMAGE_NAME"
-                }
-            }
-        }
-    }
-
-    post {
-        always {
-            echo 'Pipeline execution complete.'
         }
     }
 }
