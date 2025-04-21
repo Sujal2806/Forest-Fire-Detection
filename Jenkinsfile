@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/sujalgp/forest-fire-app.git'
+                git 'https://github.com/Sujal2806/Forest-Fire-Detection.git'
             }
         }
 
