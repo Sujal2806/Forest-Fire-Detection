@@ -4,6 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'sujalgp/forest-fire-app'
     }
+    
 
     stages {
         stage('Clone Repo') {
