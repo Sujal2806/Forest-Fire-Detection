@@ -1,44 +1,36 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE_NAME = 'sujalgp/forest-fire-app'
-    }
-    
-
     stages {
-        stage('Clone Repo') {
+        stage('🔄 Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/Sujal2806/Forest-Fire-Detection.git'
+                checkout scm
             }
         }
 
-        stage('Build Docker Image') {
+        stage('🐳 Docker Login') {
             steps {
-                script {
-                    sh 'docker build -t $IMAGE_NAME .'
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
                 }
             }
         }
 
-        stage('Push to Docker Hub') {
+        stage('🛠️ Build Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh '''
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker push sujalgp/forest-fire-app:latest
-                    '''
-                }
+                sh "docker build -t sujalgp/forest-fire-app ."
+            }
+        }
+
+        stage('🚀 Push Docker Image') {
+            steps {
+                sh "docker push sujalgp/forest-fire-app"
             }
         }
     }
-
     post {
-        failure {
-            echo '🚨 Build failed!'
-        }
-        success {
-            echo '✅ Docker image built and pushed successfully!'
+        always {
+            echo '✅ Pipeline completed.'
         }
     }
 }
