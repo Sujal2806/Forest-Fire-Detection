@@ -4,6 +4,7 @@ import torch
 from torchvision import transforms, models
 import torch.nn as nn
 
+
 # ✅ Must be the first Streamlit command
 st.set_page_config(page_title="🔥 Forest Fire Detector", layout="centered")
 
