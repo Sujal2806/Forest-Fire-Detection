@@ -52,4 +52,4 @@ if uploaded_file:
     # Display result with caption
     st.markdown("---")
     st.image(image, caption=f"🧠 Prediction: **{prediction}**", use_container_width =True)
-    st.success(f"🔥 Model Prediction: {prediction}")
+    st.success(f"🔥 Model Prediction is here: {prediction}")
